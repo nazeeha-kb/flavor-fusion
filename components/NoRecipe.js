@@ -8,7 +8,7 @@ const NoRecipe = () => {
       </div>
       <h3 className="font-semibold text-xl mt-6">Enter ingredients to get started</h3>
       <p className="text-gray-600 mt-4">
-        Type the ingredients you have and we'll suggest delicious recipes you
+        Type the ingredients you have and we&apos;ll suggest delicious recipes you
         can make right now.
       </p>
     </div>

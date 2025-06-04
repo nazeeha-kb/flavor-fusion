@@ -13,7 +13,7 @@ const home = () => {
             <div className="text-center flex flex-col md:gap-6 gap-10 mt-14">
               <h1 className="font-semibold text-4xl">Find Delicious Recipes</h1>
               <p className="text-[18px] text-gray-600">
-                Enter the ingredients you have on hand, and I'll generate the
+                Enter the ingredients you have on hand, and I&apos;ll generate the
                 perfect recipe for you.
               </p>
               <div className="generator border-1 border-gray-500 rounded-xl p-3 bg-white">
