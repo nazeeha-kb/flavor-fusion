@@ -1,5 +1,0 @@
-[phases.build]
-nix_pkgs = ["nodejs"]
-commands = [
-  "npm install --omit=dev --no-audit"
-]
