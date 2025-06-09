@@ -85,14 +85,14 @@ const Navbar = () => {
                   </li>
                   <li>
                     <Link
-                      href={"/your-recipes"}
+                      href={"/favorites"}
                       className={
-                        pathname === "/your-recipes"
+                        pathname === "/favorites"
                           ? "text-white block py-2 px-3 rounded-xl bg-green-600"
                           : "block py-2 px-3 text-black rounded-xl md:bg-transparent md:dark:text hover:bg-gray-200"
                       }
                     >
-                      Recipes
+                      Favorites
                     </Link>
                   </li>
                   <li>

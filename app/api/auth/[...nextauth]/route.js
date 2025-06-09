@@ -1,5 +1,7 @@
 import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
+import dbConnect from '@/app/lib/dbConnect'
+import User from '@/app/lib/models/User'
  
 
 export const authoptions =  NextAuth({
@@ -11,29 +13,31 @@ export const authoptions =  NextAuth({
       }),
       
     ],
-    // callbacks: {
-    //   async signIn({ user, account, profile, email, credentials }) {
-    //      if(account.provider == "google") { 
-    //     //   await connectDb()
-    //       // Check if the user already exists in the database
-    //       const currentUser =  await User.findOne({email: email}) 
-    //       if(!currentUser){
-    //         // Create a new user
-    //          const newUser = await User.create({
-    //           email: user.email, 
-    //           username: user.email.split("@")[0], 
-    //         })   
-    //       } 
-    //       return true
-    //      }
-    //   },
+
+    callbacks: {
+      async signIn({ user, account, profile, email, credentials }) {
+         if(account.provider == "google") { 
+          await dbConnect()
+          // Check if the user already exists in the database
+          const currentUser =  await User.findOne({email: email}) 
+          if(!currentUser){
+            // Create a new user
+             const newUser = await User.create({
+              email: user.email, 
+              // username: user.email.split("@")[0], 
+            })   
+          } 
+          return true
+         }
+      },
       
-    //   async session({ session, user, token }) {
-    //     const dbUser = await User.findOne({email: session.user.email})
-    //     session.user.name = dbUser.username
-    //     return session
-    //   },
-    // } 
+      async session({ session, user, token }) {
+        await dbConnect();
+        const dbUser = await User.findOne({email: session.user.email});
+        // session.user.name = dbUser?.username || session.user.name;
+        return session;
+      },
+    } 
   })
 
   export { authoptions as GET, authoptions as POST}

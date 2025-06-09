@@ -12,10 +12,10 @@ const profile = () => {
         <div className="flex justify-between gap-6 md:flex-row flex-col mx-6">
 
 
-          <div className="bg-white border-1 border-gray-300 rounded-xl grow-1 p-8 flex  justify-between">
+          {/* <div className="bg-white border-1 border-gray-300 rounded-xl grow-1 p-8 flex  justify-between">
             <div>
               <div className="title font-semibold text-sm pb-2">
-                Recipes generated
+                Favorite Recipes
               </div>
               <div className="font-semibold text-3xl">49</div>
             </div>
@@ -24,7 +24,7 @@ const profile = () => {
                 chef_hat
               </span>
             </div>
-          </div>
+          </div> */}
 
 
           <div className="bg-white border-1 border-gray-300 rounded-xl grow-1 p-8 flex justify-between">
