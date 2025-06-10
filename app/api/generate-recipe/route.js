@@ -12,12 +12,11 @@ export async function POST(req) {
 
   try {
     const prompt = `
-Generate 3 distinct, simple and creative recipes inspired by Indian cuisine, using the following ingredients as the primary base: ${ingredients.join(
+Generate 3 distinct, creative, and simple recipes using the following ingredients as the primary base: ${ingredients.join(
       ", "
-    )}.You may add common complementary Indian ingredients as needed to make each recipe realistic and delicious.
+    )}You may freely add complementary ingredients to make each recipe realistic and flavorful.
 
-    If no fully realistic Indian dish can be made from the exact provided ingredients, you MUST still return 3 recipes by supplementing with complementary ingredients as needed.
-
+    Indian cuisine influence is welcome but not required — feel free to create globally inspired or fusion dishes.
 
 Each recipe should include:
 - a unique ID (uuid v4) for the recipe
@@ -27,11 +26,10 @@ Each recipe should include:
 - ingredients list (as an array) in the format (ingredinet - measure)
 - step-by-step instructions (as an array)
 
-Important constraints:
-- If some provided ingredients do not naturally fit a dish, you may omit them or adapt creatively. Do not force unrealistic combinations.
-- You may add common Indian ingredients to complete the recipe.
-- Only respond with a valid JSON array of recipe objects — no explanations, no extra text.
-
+Important:
+- If the exact ingredients don’t form a full dish, you must still generate 3 recipes by adding appropriate supporting ingredients. 
+- It is OK to omit or creatively adapt any ingredient if it doesn't fit well.
+- Never return an empty array under any circumstances.
 
 Return the response as a JSON array of recipe objects like this:
 
@@ -59,7 +57,7 @@ Respond only with JSON array as described
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "meta-llama/llama-3-8b-instruct", // Full model name required
+          model: "anthropic/claude-3.5-haiku",
           messages: [{ role: "user", content: prompt }],
           temperature: 0.7,
           max_tokens: 1024,
