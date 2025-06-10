@@ -12,9 +12,13 @@ export async function POST(req) {
 
   try {
     const prompt = `
-Generate 3 distinct, simple and creative recipe catered to indian taste using these ingredients: ${ingredients.join(
+Generate 3 distinct, simple and creative recipes inspired by Indian cuisine, using the following ingredients as the primary base: ${ingredients.join(
       ", "
-    )}.
+    )}.You may add common complementary Indian ingredients as needed to make each recipe realistic and delicious.
+
+    If no fully realistic Indian dish can be made from the exact provided ingredients, you MUST still return 3 recipes by supplementing with complementary ingredients as needed.
+
+
 Each recipe should include:
 - a unique ID (uuid v4) for the recipe
 - title
@@ -22,7 +26,12 @@ Each recipe should include:
 - dish classification (breakfast, lunch, dinner, dessert, other)
 - ingredients list (as an array) in the format (ingredinet - measure)
 - step-by-step instructions (as an array)
-Only provide real, publicly accessible image URLs from Unsplash.com or Pixabay.com that match the dish and DO NOT fabricate URLS
+
+Important constraints:
+- If some provided ingredients do not naturally fit a dish, you may omit them or adapt creatively. Do not force unrealistic combinations.
+- You may add common Indian ingredients to complete the recipe.
+- Only respond with a valid JSON array of recipe objects — no explanations, no extra text.
+
 
 Return the response as a JSON array of recipe objects like this:
 
@@ -37,8 +46,8 @@ Return the response as a JSON array of recipe objects like this:
   },
   {...}, {...}
 ]
-Only respond with a valid JSON array of recipe objects — no explanations, no text outside JSON.  
 .
+Respond only with JSON array as described
 `;
 
     const response = await fetch(
