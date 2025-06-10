@@ -18,7 +18,7 @@ export default function Landing() {
 
   if (status === "loading")
     return (
-      <div>y
+      <div>
         <Loading />
       </div>
     );
