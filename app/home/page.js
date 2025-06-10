@@ -5,7 +5,7 @@ import RecipeCard from "@/components/RecipeCard";
 import Generating from "@/components/Generating";
 import { v4 as uuidv4 } from "uuid";
 
-const home = () => {
+const Home = () => {
   const [ingredients, setIngredients] = useState("");
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState("");
@@ -118,4 +118,4 @@ const home = () => {
   );
 };
 
-export default home;
+export default Home;
