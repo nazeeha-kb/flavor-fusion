@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSession, signIn, signOut, status } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import react from "react";
@@ -9,6 +9,9 @@ import Loading from "@/components/Loading";
 export default function Landing() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [inputEmail, setInputEmail] = useState("");
+  const [inputPassword, setInputPassword] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (session) {
@@ -23,12 +26,33 @@ export default function Landing() {
       </div>
     );
 
+  // For the sign in
+  const handleLogin = async (e) => {
+    // This prevents the default behaviour (relaoding of the page) and we're using it since I'm calling an API here.
+    e.preventDefault();
+    const res = await signIn("credentials", {
+      redirect: false,
+      email:inputEmail,
+      password:inputPassword,
+    });
+
+    if (res?.error) {
+      setError("Invalid email or password");
+    } else {
+      router.push("/home");
+    }
+  };
+
   return (
     <div className="bg-gray-50">
       <div className="lg:flex block">
         <div className="w-[50%] h-[86vh] hidden lg:block relative text-center">
-          <h2 className="text-white absolute top-[30vh] left-4 text-6xl font-bold ">Discover Amazing Recipes</h2>
-          <h4 className="top-[48vh] left-4 text-3xl font-semibold text-white absolute">Turn your ingredients into delicious meals with FlavorFusion</h4>
+          <h2 className="text-white absolute top-[30vh] left-4 text-6xl font-bold ">
+            Discover Amazing Recipes
+          </h2>
+          <h4 className="top-[48vh] left-4 text-3xl font-semibold text-white absolute">
+            Turn your ingredients into delicious meals with FlavorFusion
+          </h4>
           <img
             src="/food-image.jpg"
             alt=""
@@ -48,7 +72,12 @@ export default function Landing() {
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md shadow-lg">
               <div className="bg-white py-8 px-4 sm:rounded-lg sm:px-10">
-                <form className="space-y-6" action="#" method="POST">
+                <form
+                  className="space-y-6"
+                  action="#"
+                  method="POST"
+                  onSubmit={handleLogin}
+                >
                   <div>
                     <label
                       htmlFor="email"
@@ -65,6 +94,7 @@ export default function Landing() {
                         required
                         className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                         placeholder="Enter your email address"
+                        onChange={(e) => setInputEmail(e.target.value)}
                       />
                     </div>
                   </div>
@@ -85,9 +115,11 @@ export default function Landing() {
                         required
                         className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                         placeholder="Enter your password"
+                        onChange={(e) => setInputPassword(e.target.value)}
                       />
                     </div>
                   </div>
+                  {error && <p className="text-red-500">{error}</p>}
 
                   <div>
                     <button
