@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import NoRecipe from "@/components/NoRecipe";
 import RecipeCard from "@/components/RecipeCard";
 import Generating from "@/components/Generating";
-import { v4 as uuidv4 } from "uuid";
+import NoGenerated from "@/components/NoGenerated";
 
 const Home = () => {
   const [ingredients, setIngredients] = useState("");
@@ -41,14 +41,14 @@ const Home = () => {
       console.log("generated recipe:", data.recipe);
       // updating "recipe" to include the generated recipe
       setRecipe(data.recipe);
-      if (
-        !parsedRecipe.title ||
-        !Array.isArray(parsedRecipe.ingredients) ||
-        !Array.isArray(parsedRecipe.instructions)
-      ) {
-        console.error("AI returned incomplete recipe.");
-        return; // skip it or show error
-      }
+      // if (
+      //   !parsedRecipe.title ||
+      //   !Array.isArray(parsedRecipe.ingredients) ||
+      //   !Array.isArray(parsedRecipe.instructions)
+      // ) {
+      //   console.error("AI returned incomplete recipe.");
+      //   return; // skip it or show error
+      // }
     } catch (error) {
       console.log(`error generating recipe ${error}`);
     } finally {
@@ -94,7 +94,7 @@ const Home = () => {
           <section className="w-full">
             {loading && <Generating />}
             {noRecipe && <NoRecipe />}
-            {genRecipes && (
+            {(genRecipes && recipe.length != 0) && (
               <div className="md:mt-10 mt-14 w-full-xl">
                 <h3 className="font-semibold text-2xl">Generated Recipes</h3>
                 <div className="gen-recipes flex xl:gap-6 md:gap-4 gap-2 md:pt-5 pt-7 justify-between h-full w-full flex-wrap">
@@ -111,6 +111,8 @@ const Home = () => {
                 </div>
               </div>
             )}
+            {/* If no recipe is generated then show the noGen component - but while the other conditions (&&) are met too */}
+            {recipe.length === 0 && !noRecipe && !loading && <NoGenerated />}
           </section>
         </div>
       </div>

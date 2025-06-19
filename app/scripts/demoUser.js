@@ -3,10 +3,9 @@
 import bcrypt from "bcrypt";
 import User from "../lib/models/User.js";
 import dbConnect from "../lib/dbConnect.js";
-import 'dotenv/config'; // for ESM
+import "dotenv/config"; // for ESM
 
 // This creates a demo user for testing purposes which user can sing in with
-
 
 async function createDemoUser() {
   await dbConnect();
@@ -16,7 +15,10 @@ async function createDemoUser() {
 
   const hashedPassword = await bcrypt.hash(plainPassword, saltRounds);
 
-  const existingUser = await User.findOne({ email: "demo.app.user.101@gmail.com" });
+  const existingUser = await User.findOne({
+    email: "demo.app.user.101@gmail.com",
+  });
+
   if (existingUser) {
     console.log("Demo user already exists");
     process.exit(0);

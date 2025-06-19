@@ -12,11 +12,11 @@ export async function POST(req) {
 
   try {
     const prompt = `
-Generate 3 distinct, creative, and simple recipes using the following ingredients as the primary base: ${ingredients.join(
+Generate 3 distinct and simple, classic recipes using the following ingredients as the primary base: ${ingredients.join(
       ", "
     )}You may freely add complementary ingredients to make each recipe realistic and flavorful.
 
-    Indian cuisine influence is welcome but not required — feel free to create globally inspired or fusion dishes.
+    Indian cuisine influence is the priority — however, you can create globally inspired or fusion dishes.
 
 Each recipe should include:
 - a unique ID (uuid v4) for the recipe
@@ -57,10 +57,9 @@ Respond only with JSON array as described
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "anthropic/claude-3.5-haiku",
+          model: "deepseek/deepseek-r1:free",
           messages: [{ role: "user", content: prompt }],
           temperature: 0.7,
-          max_tokens: 1024,
         }),
       }
     );

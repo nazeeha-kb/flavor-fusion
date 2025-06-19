@@ -1,13 +1,13 @@
 import dbConnect from "@/app/lib/dbConnect";
 import User from "@/app/lib/models/User";
 import { getServerSession } from "next-auth";
-import { authoptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function POST(req) {
   await dbConnect();
 
   //   Checking the session
-  const session = await getServerSession(authoptions);
+  const session = await getServerSession(authOptions);
 
   //   Getting the recipe user wants to save as body
   const body = await req.json();
@@ -39,7 +39,7 @@ export async function POST(req) {
 export async function GET() {
   await dbConnect();
 
-  const session = await getServerSession(authoptions);
+  const session = await getServerSession(authOptions);
 
   const userEmail = session.user.email;
   const user = await User.findOne({ email: userEmail });
@@ -56,7 +56,7 @@ export async function GET() {
 export async function DELETE(req) {
   await dbConnect();
 
-  const session = await getServerSession(authoptions);
+  const session = await getServerSession(authOptions);
 
   //   Getting the user's email
   const userEmail = session.user.email;
