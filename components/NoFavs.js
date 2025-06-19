@@ -9,7 +9,7 @@ const NoFavs = () => {
           <span className="text-3xl">❤️</span>
         </div>
         <h3 className="font-semibold text-xl mt-6">
-          You haven't saved any favorites yet
+          You haven&apos;t saved any favorites yet
         </h3>
         <div className="text-gray-600 mt-4 md:w-[40vw]">
           <div className="text-center">
