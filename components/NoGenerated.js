@@ -8,10 +8,10 @@ const NoGenerated = () => {
       </div>
       <div className="w-[46vw]">
         <h3 className="font-semibold text-xl mt-6">
-          That’s a unique combination!
+          That&apos;s a unique combination!
         </h3>
         <p className="text-gray-600 mt-4">
-          We couldn’t find a matching recipe. Try re-entering the ingredients or
+          We couldn&apos;t find a matching recipe. Try re-entering the ingredients or
           experimenting with a different combo to discover something delicious!
         </p>
       </div>
