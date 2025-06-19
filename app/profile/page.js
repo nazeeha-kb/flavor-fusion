@@ -2,7 +2,7 @@
 import CuisineBar from "@/components/CuisineBar";
 import React, { useEffect, useState } from "react";
 
-const profile = () => {
+const Profile = () => {
   const [favs, setFavs] = useState([]);
 
   useEffect(() => {
@@ -80,4 +80,4 @@ const profile = () => {
   );
 };
 
-export default profile;
+export default Profile;
