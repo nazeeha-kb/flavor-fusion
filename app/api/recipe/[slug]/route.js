@@ -36,7 +36,7 @@ export async function GET(req, { params }) {
   });
 
   if (!recipe) {
-    return new Response(JSON.stringify({ message: "Recipe not found" }), {
+    return new Response(JSON.stringify("not found"), {
       status: 404,
     });
   }

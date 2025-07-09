@@ -3,15 +3,27 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Loading from "@/components/Loading";
+import slugify from "slugify";
 
 const RecipePage = () => {
   const router = useRouter();
   const { slug } = useParams(); // dynamic part of the URL
+  // const [localRecipe, setLocalRecipe] = useState(null);
   const [recipe, setRecipe] = useState(null);
-
+  
   useEffect(() => {
     const fetchRecipe = async () => {
+      // If i don't do "JSON.parse - the recipe returns as a string"
       try {
+        const storedRecipes =
+        JSON.parse(localStorage.getItem("recipes")) ||
+        "⛔ no recipes in localStorage";
+        const recipe = storedRecipes.find((recipe) => recipe.title);
+        const recipeTitle = recipe.title
+        console.log("The title of this recipe is",recipeTitle)
+        const recipeSlug = slugify(recipeTitle, { lower: true });
+        console.log("the slug of this particular recipe is:",recipeSlug)
+        // setLocalRecipes(storedRecipes);
         const res = await fetch(`/api/recipe/${slug}`);
         if (!res.ok) {
           console.log("the slug is", slug);
@@ -19,22 +31,34 @@ const RecipePage = () => {
           console.log("Recipe not found");
         }
         const data = await res.json();
-        setRecipe(data);
+        if (data != "not found") {
+          setRecipe(data);
+          console.log("recipe is set to", data);
+        } else {
+          const foundRecipe = storedRecipes.find(
+            (recipe) => recipeSlug === slug
+          );
+          setRecipe(foundRecipe);
+          console.log("the recipe is:", foundRecipe);
+        }
         console.log("the slug is", slug);
         console.log("🍚 the recipe you're viewing is:", data);
       } catch (err) {
         console.log(err);
       }
     };
-
     fetchRecipe();
   }, [slug]);
+
+  // useEffect(() => {
+  //   console.log("the local recipes are", localRecipes);
+  // }, [localRecipes]);
 
   const handleClose = () => {
     router.back(); //this will take user back to the previous page in history stack
   };
 
-  if (!recipe)
+  if (recipe == [] || !recipe)
     return (
       <div>
         <Loading />
@@ -45,7 +69,9 @@ const RecipePage = () => {
     <div className=" bg-gray-50 w-full min-h-[44vw] flex flex-col justify-center">
       <div className="recipe-page md:mx-auto mx-6 max-w-4xl bg-green-50 border-gray-400 border rounded-2xl p-8 shadow-lg relative my-10">
         <div className="flex justify-between  px-2 mt-6">
-          <h1 className="text-3xl font-semibold text-gray-900">{recipe.title}</h1>
+          <h1 className="text-3xl font-semibold text-gray-900">
+            {recipe.title}
+          </h1>
           <div
             className="bg-red-200 rounded-full w-8 p-1 flex justify-center items-center cursor-pointer group hover:bg-red-400 absolute top-6 right-6"
             onClick={handleClose}
@@ -67,7 +93,7 @@ const RecipePage = () => {
               Ingredients
             </h2>
             <ul className="list-disc marker:text-green-700 pl-6">
-              {recipe.ingredients.map((ingredient, index)=>(
+              {recipe.ingredients.map((ingredient, index) => (
                 <li key={index}>{ingredient}</li>
               ))}
             </ul>
@@ -77,7 +103,7 @@ const RecipePage = () => {
               Instructions
             </h2>
             <ul className="list-decimal marker:text-green-700 pl-6">
-              {recipe.instructions.map((instruction,index)=>(
+              {recipe.instructions.map((instruction, index) => (
                 <li key={index}>{instruction}</li>
               ))}
             </ul>

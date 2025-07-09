@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 const Footer = () => {
   return (
@@ -8,7 +9,8 @@ const Footer = () => {
       <div className="flex gap-2 cursor-pointer">
         <div className="hover:text-gray-900">Privacy Policy</div>
         <div className="hover:text-gray-900">Terms of Service</div>
-        <div className="hover:text-gray-900">Contact Us</div>
+        <div className="hover:text-gray-900">
+          <Link href={"/home"}>Contact Us</Link></div>
       </div>
     </div>
     </div>

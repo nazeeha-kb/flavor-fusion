@@ -5,6 +5,7 @@ import { useSession, signIn, signOut, status } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import react from "react";
 import Loading from "@/components/Loading";
+import { Analytics } from "@vercel/analytics/next"
 
 export default function Landing() {
   const { data: session, status } = useSession();
