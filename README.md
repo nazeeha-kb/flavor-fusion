@@ -19,20 +19,21 @@ Flavor Fusion is an **AI-powered** recipe generator web app that creates recipes
 
 ## 🚀 Live Demo
 
-Check out the live version here: [Flavor Fusion Web-App](https://flavor-fusion-production.up.railway.app/)
+Check out the live version here: [Flavor Fusion Web-App](https://flavor-fusion-ai.vercel.app)
 
 ## 🛠️ Tech Stack
 <div>
   <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nextjs/nextjs-original.svg" alt="nextjs" width="45" height="45" />
   <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/mongodb/mongodb-original-wordmark.svg" alt="mongodb" width="45" height="45"/>
   <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Tailwind_CSS_Logo.svg" width="45" height="45" />
-  <img src="https://railway.app/brand/logo-light.png" alt="Railway" width="40" />
 </div>
   <br>
   
 - NextAuth - for authentication
 - Openrouter.ai API
 - Pixabay API
+- Vercel - Deployement
+
 
 ## 🔐 Authentication
 Users must Sign in with their Google account to generate and manage recipes. Each user's data (saved recipes, etc.) is securely stored and accessed only by them.
