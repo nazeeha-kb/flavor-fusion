@@ -6,9 +6,9 @@ import { createClient } from "pexels";
 import slugify from "slugify";
 // import { v4 as uuidv4 } from "uuid";
 
-// // toastify
-// import { ToastContainer, toast, Bounce } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
+// toastify
+import { ToastContainer, toast, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const RecipeCard = ({ recipe, isFavorite = false, onUnlike }) => {
   const [favorite, setFavorite] = useState(isFavorite);
@@ -64,17 +64,17 @@ const RecipeCard = ({ recipe, isFavorite = false, onUnlike }) => {
         },
         body: JSON.stringify(favoriteRecipe),
       });
-      // toast("💗 Recipe saved to favs", {
-      //   position: "top-right",
-      //   autoClose: 5000,
-      //   hideProgressBar: false,
-      //   closeOnClick: false,
-      //   pauseOnHover: true,
-      //   draggable: true,
-      //   progress: undefined,
-      //   theme: "light",
-      //   transition: Bounce,
-      // });
+      toast("💗 Recipe saved to favs", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     } finally {
       setFavorite(true);
     }
@@ -95,17 +95,17 @@ const RecipeCard = ({ recipe, isFavorite = false, onUnlike }) => {
     if (res.ok) {
       setFavorite(false);
 
-      // toast("🗑️ your recipe is deleted!", {
-      //   position: "top-right",
-      //   autoClose: 5000,
-      //   hideProgressBar: false,
-      //   closeOnClick: false,
-      //   pauseOnHover: true,
-      //   draggable: true,
-      //   progress: undefined,
-      //   theme: "light",
-      //   transition: Bounce,
-      // });
+      toast("🗑️ your recipe is deleted!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
       console.log("idk why the delete toast ran 🤷🏼‍♀️");
       // setFavs((prevFavorites) =>
       //   prevFavorites.filter((recipe) => recipe.id !== recipeId)
@@ -117,7 +117,7 @@ const RecipeCard = ({ recipe, isFavorite = false, onUnlike }) => {
 
   return (
     <div>
-      {/* <ToastContainer
+      <ToastContainer
         position="top-right"
         autoClose={5000}
         hideProgressBar={false}
@@ -129,7 +129,7 @@ const RecipeCard = ({ recipe, isFavorite = false, onUnlike }) => {
         pauseOnHover
         theme="light"
         transition={Bounce}
-      /> */}
+      />
       <div className="bg-white border-1 border-gray-300 rounded-2xl h-full overflow-hidden hover:shadow-md cursor-pointer">
         <div className=" min-h-[24vh] relative">
           <Link href={`/recipe/${recipeSlug}`}>
