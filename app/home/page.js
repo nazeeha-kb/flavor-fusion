@@ -47,19 +47,6 @@ const Home = () => {
 
       // updating "recipe" to include the generated recipe
       setRecipe(data.recipe);
-      // Storing the generated recipes in localStorage
-      if (data.recipe.length != 0) {
-        try {
-          const Recipes = data.recipe;
-          localStorage.removeItem("recipes");
-          localStorage.setItem("recipes", JSON.stringify(Recipes));
-          console.log("local storage recipes", Recipes);
-        } catch (err) {
-          console.log("couldnt save to locaal storage cause of", err);
-        }
-      } else {
-        console.log("didn't store in localstorage");
-      }
       // };
     } catch (error) {
       console.log(`error generating recipe ${error}`);
