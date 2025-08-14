@@ -2,12 +2,8 @@
 import React, { useState, useEffect } from "react";
 import NoRecipe from "@/components/NoRecipe";
 import RecipeCard from "@/components/RecipeCard";
-import Generating from "@/components/Generating";
 import NoGenerated from "@/components/NoGenerated";
 import SkeletonLoader from "@/components/SkeletonLoader";
-// toastify
-// import { ToastContainer, toast, Bounce } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
 
 const Home = () => {
   const arr = [1, 2, 3];
@@ -17,20 +13,7 @@ const Home = () => {
   const [noRecipe, setNoRecipe] = useState(true);
   const [genRecipes, setGenRecipes] = useState(false);
   const [disableInput, setDisableInput] = useState(false);
-  const [localRecipesPresent, setlocalRecipesPresent] = useState(false);
-  const [localRecipes, setlocalRecipes] = useState(null);
-  // unliking recipe
-  const [favs, setFavs] = useState([]);
 
-  useEffect(() => {
-    const storedRecipes =
-      JSON.parse(localStorage.getItem("recipes")) ||
-      "⛔ no recipes in localStorage";
-    if (storedRecipes.length != 0) {
-      setlocalRecipes(storedRecipes);
-      setlocalRecipesPresent(true);
-    }
-  }, []);
   // Working: UseEffect fetches fav recipes Unliking the recipe
   const GenerateRecipe = async () => {
     const ingredientArray = ingredients.split(",").map((item) => item.trim());
@@ -66,11 +49,6 @@ const Home = () => {
       setRecipe(data.recipe);
       // Storing the generated recipes in localStorage
       if (data.recipe.length != 0) {
-        // const flatRecipes = data.recipe.flat(); // ensure it's a flat array
-        // const uniqueRecipes = Array.from(
-        //   new Map(flatRecipes.map((r) => [r.id, r])).values()
-        // ); // removes duplicates by id
-
         try {
           const Recipes = data.recipe;
           localStorage.removeItem("recipes");
@@ -160,24 +138,7 @@ const Home = () => {
               </div>
             )}
             {/* When no recipes are generate show this: */}
-            {noRecipe && !localRecipesPresent && <NoRecipe />}
-            {/* When recipes no recipes are generated AND there's recipes in localstorage show this: */}
-            {noRecipe && localRecipesPresent && (
-              <div className="md:mt-10 mt-14 w-full-xl">
-                <h3 className="font-semibold text-2xl">Generated Recipes</h3>
-                <div className="gen-recipes flex xl:gap-6 md:gap-4 gap-2 md:pt-5 pt-7 justify-between h-full w-full flex-wrap">
-                  {localRecipes.map((recipes) => (
-                    <div
-                      key={recipes.id}
-                      id={recipes.id}
-                      className="lg:max-w-[32%] sm:max-w-[48%] w-full mb-4"
-                    >
-                      <RecipeCard recipe={recipes} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            {noRecipe && <NoRecipe />}
             {genRecipes && recipe.length != 0 && (
               <div className="md:mt-10 mt-14 w-full-xl">
                 <h3 className="font-semibold text-2xl">Generated Recipes</h3>
