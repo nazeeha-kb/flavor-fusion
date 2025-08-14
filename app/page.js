@@ -61,7 +61,7 @@ export default function Landing() {
           />
         </div>
         <div className="lg:w-[50%] w-full">
-          <div className=" flex flex-col justify-center lg:py-14 py-6 px-10 sm:px-6 items-center">
+          <div className=" flex flex-col justify-center py-14 px-10 sm:px-6 items-center">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
               <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
                 Sign in
