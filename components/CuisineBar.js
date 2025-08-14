@@ -13,18 +13,18 @@ import {
 
 const CuisineBar = () => {
   const data = [
-    { cuisine: "Breakfast", count: 14 },
-    { cuisine: "Lunch", count: 9 },
-    { cuisine: "Dinner", count: 8 },
-    { cuisine: "Dessert", count: 7 },
-    { cuisine: "Refreshment", count: 5 },
+    { cuisine: "Chicken", count: 14 },
+    { cuisine: "Mutton", count: 9 },
+    { cuisine: "Garlic", count: 8 },
+    { cuisine: "Honey", count: 7 },
+    { cuisine: "Milk", count: 5 },
     { cuisine: "Other", count: 4 },
   ];
 
   return (
     <div className="bg-white border-1 border-gray-300 ;lg:pb-18 md:pb-15 pb-16 pr-8 my-6 rounded-3xl lg:w-[60vw] w-full">
-      <div style={{ width: "100%", height: 280 }}>
-        <h2 className="text-xl font-semibold m-6">Your generated recipes</h2>
+      <div style={{ width: "100%", height: 260 }}>
+        <h2 className="text-xl font-semibold m-6">Your Most Used Ingredients</h2>
         <ResponsiveContainer>
           <BarChart data={data}>
             <XAxis dataKey="cuisine" />
