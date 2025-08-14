@@ -4,20 +4,15 @@ import { useState } from "react";
 import Link from "next/link";
 import { createClient } from "pexels";
 import slugify from "slugify";
-// import { v4 as uuidv4 } from "uuid";
-
-// // toastify
-// import { ToastContainer, toast, Bounce } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
 
 const RecipeCard = ({ recipe, isFavorite = false, onUnlike }) => {
   const [favorite, setFavorite] = useState(isFavorite);
   const [imageUrl, setImageUrl] = useState("");
-  const maxToshow = 4;
+  const maxToshow = 3;
   const showIngredients = recipe.ingredients.slice(0, maxToshow);
   const remainingCount = recipe.ingredients.length - maxToshow;
   const pexelsClient = createClient(process.env.NEXT_PUBLIC_PEXELS_API_KEY);
-  const recipeSlug = slugify(recipe.title, { lower: true })
+  const recipeSlug = slugify(recipe.title, { lower: true });
 
   async function fetchImageFromPexels(query) {
     try {
@@ -30,9 +25,9 @@ const RecipeCard = ({ recipe, isFavorite = false, onUnlike }) => {
     }
   }
 
-  useEffect(()=>{
-    console.log("from recipe card this recipe's slug is:",recipeSlug)
-  })
+  useEffect(() => {
+    console.log("from recipe card this recipe's slug is:", recipeSlug);
+  });
 
   useEffect(() => {
     async function loadImage() {
@@ -41,7 +36,6 @@ const RecipeCard = ({ recipe, isFavorite = false, onUnlike }) => {
     }
     loadImage();
   }, [recipe.title]);
-
 
   // Favorites recipe logic
   const handleLike = async () => {
@@ -64,22 +58,9 @@ const RecipeCard = ({ recipe, isFavorite = false, onUnlike }) => {
         },
         body: JSON.stringify(favoriteRecipe),
       });
-      // toast("💗 Recipe saved to favs", {
-      //   position: "top-right",
-      //   autoClose: 5000,
-      //   hideProgressBar: false,
-      //   closeOnClick: false,
-      //   pauseOnHover: true,
-      //   draggable: true,
-      //   progress: undefined,
-      //   theme: "light",
-      //   transition: Bounce,
-      // });
     } finally {
       setFavorite(true);
     }
-    // console.log("the recipe",recipe)
-    // console.log("favorite reicpe",favoriteRecipe)
   };
 
   // Handling Unlike here instead of on favs page
@@ -94,22 +75,6 @@ const RecipeCard = ({ recipe, isFavorite = false, onUnlike }) => {
 
     if (res.ok) {
       setFavorite(false);
-
-      // toast("🗑️ your recipe is deleted!", {
-      //   position: "top-right",
-      //   autoClose: 5000,
-      //   hideProgressBar: false,
-      //   closeOnClick: false,
-      //   pauseOnHover: true,
-      //   draggable: true,
-      //   progress: undefined,
-      //   theme: "light",
-      //   transition: Bounce,
-      // });
-      console.log("idk why the delete toast ran 🤷🏼‍♀️");
-      // setFavs((prevFavorites) =>
-      //   prevFavorites.filter((recipe) => recipe.id !== recipeId)
-      // );
     } else {
       console.error("Failed to delete favorite");
     }
@@ -117,19 +82,6 @@ const RecipeCard = ({ recipe, isFavorite = false, onUnlike }) => {
 
   return (
     <div>
-      {/* <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        transition={Bounce}
-      /> */}
       <div className="bg-white border-1 border-gray-300 rounded-2xl h-full overflow-hidden hover:shadow-md cursor-pointer">
         <div className=" min-h-[24vh] relative">
           <Link href={`/recipe/${recipeSlug}`}>

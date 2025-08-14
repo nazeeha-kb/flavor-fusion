@@ -4,11 +4,13 @@ import NoRecipe from "@/components/NoRecipe";
 import RecipeCard from "@/components/RecipeCard";
 import Generating from "@/components/Generating";
 import NoGenerated from "@/components/NoGenerated";
+import SkeletonLoader from "@/components/SkeletonLoader";
 // toastify
 // import { ToastContainer, toast, Bounce } from "react-toastify";
 // import "react-toastify/dist/ReactToastify.css";
 
 const Home = () => {
+  const arr = [1, 2, 3];
   const [ingredients, setIngredients] = useState("");
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState("");
@@ -16,7 +18,7 @@ const Home = () => {
   const [genRecipes, setGenRecipes] = useState(false);
   const [disableInput, setDisableInput] = useState(false);
   const [localRecipesPresent, setlocalRecipesPresent] = useState(false);
-  const [localRecipes, setlocalRecipes] = useState(null)
+  const [localRecipes, setlocalRecipes] = useState(null);
   // unliking recipe
   const [favs, setFavs] = useState([]);
 
@@ -25,7 +27,7 @@ const Home = () => {
       JSON.parse(localStorage.getItem("recipes")) ||
       "⛔ no recipes in localStorage";
     if (storedRecipes.length != 0) {
-      setlocalRecipes(storedRecipes)
+      setlocalRecipes(storedRecipes);
       setlocalRecipesPresent(true);
     }
   }, []);
@@ -38,7 +40,7 @@ const Home = () => {
     setNoRecipe(false);
     setRecipe(""); // clears previous recipes
     // Disabling the input
-    setDisableInput(true)
+    setDisableInput(true);
 
     // Now we'll fetch the API and generate the recipe:
 
@@ -86,7 +88,7 @@ const Home = () => {
     } finally {
       setLoading(false);
       setGenRecipes(true);
-      setDisableInput(false)
+      setDisableInput(false);
     }
   };
 
@@ -108,7 +110,11 @@ const Home = () => {
                 Enter the ingredients you have on hand, and I&apos;ll generate
                 the perfect recipe for you.
               </p>
-              <div className={`generator border-1 border-gray-500 rounded-xl p-3  ${disableInput?`bg-gray-100 text-gray-500`:`bg-white`}`}>
+              <div
+                className={`generator border-1 border-gray-500 rounded-xl p-3  ${
+                  disableInput ? `bg-gray-100 text-gray-500` : `bg-white`
+                }`}
+              >
                 <div className="input-area flex justify-between">
                   <input
                     type="text"
@@ -125,7 +131,11 @@ const Home = () => {
                   <button
                     onClick={GenerateRecipe}
                     disabled={disableInput}
-                    className={`cursor-pointer rounded-full w-8 h-8 flex items-center justify-center  transition ${disableInput?`bg-gray-400  hover:bg-none`:`bg-green-300  hover:bg-green-500`}`}
+                    className={`cursor-pointer rounded-full w-8 h-8 flex items-center justify-center  transition ${
+                      disableInput
+                        ? `bg-gray-400  hover:bg-none`
+                        : `bg-green-300  hover:bg-green-500`
+                    }`}
                   >
                     <img src="/arrow-up.svg" alt="" className="w-[14px]" />
                   </button>
@@ -134,7 +144,21 @@ const Home = () => {
             </div>
           </section>
           <section className="w-full">
-            {loading && <Generating />}
+            {loading && (
+              <div className="md:mt-10 mt-14 w-full-xl">
+                <h3 className="font-semibold text-2xl">Generated Recipes</h3>
+                <div className="gen-recipes flex xl:gap-6 md:gap-4 gap-2 md:pt-5 pt-7 justify-between h-full w-full flex-wrap">
+                  {arr.map((i) => (
+                    <div
+                      key={i}
+                      className="lg:max-w-[32%] sm:max-w-[48%] w-full mb-4"
+                    >
+                      <SkeletonLoader />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             {/* When no recipes are generate show this: */}
             {noRecipe && !localRecipesPresent && <NoRecipe />}
             {/* When recipes no recipes are generated AND there's recipes in localstorage show this: */}
@@ -148,9 +172,7 @@ const Home = () => {
                       id={recipes.id}
                       className="lg:max-w-[32%] sm:max-w-[48%] w-full mb-4"
                     >
-                      <RecipeCard
-                        recipe={recipes}
-                      />
+                      <RecipeCard recipe={recipes} />
                     </div>
                   ))}
                 </div>

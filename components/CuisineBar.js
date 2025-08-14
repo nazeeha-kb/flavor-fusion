@@ -22,8 +22,8 @@ const CuisineBar = () => {
   ];
 
   return (
-    <div className="bg-white border-1 border-gray-300 ;lg:pb-18 md:pb-14 pb-16 pr-8 my-6 rounded-3xl lg:w-[60vw] w-full">
-      <div style={{ width: "100%", height: 300 }}>
+    <div className="bg-white border-1 border-gray-300 ;lg:pb-18 md:pb-15 pb-16 pr-8 my-6 rounded-3xl lg:w-[60vw] w-full">
+      <div style={{ width: "100%", height: 280 }}>
         <h2 className="text-xl font-semibold m-6">Your generated recipes</h2>
         <ResponsiveContainer>
           <BarChart data={data}>
