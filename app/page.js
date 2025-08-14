@@ -45,10 +45,10 @@ export default function Landing() {
   };
 
   return (
-    <div className="bg-gray-50">
+    <div className="bg-gray-50 h-[84vh] overflow-hidden">
       <div className="lg:flex block">
-        <div className="w-[50%] h-[86vh] hidden lg:block relative text-center">
-          <h2 className="text-white absolute top-[30vh] left-4 text-6xl font-bold ">
+        <div className="w-[50%] h-[84vh] hidden lg:block relative text-center">
+          <h2 className="text-white absolute top-[28vh] left-4 text-6xl font-bold ">
             Discover Amazing Recipes
           </h2>
           <h4 className="top-[48vh] left-4 text-3xl font-semibold text-white absolute">
@@ -61,7 +61,7 @@ export default function Landing() {
           />
         </div>
         <div className="lg:w-[50%] w-full">
-          <div className=" flex flex-col justify-center py-19 px-10 sm:px-6 items-center">
+          <div className=" flex flex-col justify-center lg:py-14 py-6 px-10 sm:px-6 items-center">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
               <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
                 Sign in
@@ -71,7 +71,7 @@ export default function Landing() {
               </p>
             </div>
 
-            <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md shadow-lg">
+            <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md w-[80vw] shadow-lg">
               <div className="bg-white py-8 px-4 sm:rounded-lg sm:px-10">
                 <form
                   className="space-y-6"
