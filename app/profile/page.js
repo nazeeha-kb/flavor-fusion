@@ -1,6 +1,7 @@
 "use client";
 import CuisineBar from "@/components/CuisineBar";
 import React, { useEffect, useState } from "react";
+import ProfileSection from "@/components/ProfileSection";
 
 const Profile = () => {
   const [favs, setFavs] = useState([]);
@@ -80,6 +81,7 @@ const Profile = () => {
           </div>
         </section>
         <section>
+          <ProfileSection/>
           {/* <CuisineBar /> */}
         </section>
       </div>
