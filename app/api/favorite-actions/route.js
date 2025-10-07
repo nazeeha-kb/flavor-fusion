@@ -11,7 +11,6 @@ export async function POST(req) {
 
   //   Getting the recipe user wants to save as body
   const body = await req.json();
-  console.log("the user liked recipe:", body);
   const userEmail = session.user.email;
   const user = await User.findOne({ email: userEmail });
 

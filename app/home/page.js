@@ -13,6 +13,7 @@ const Home = () => {
   const [noRecipe, setNoRecipe] = useState(true);
   const [genRecipes, setGenRecipes] = useState(false);
   const [disableInput, setDisableInput] = useState(false);
+  const [lastGenerated, setLastGenerated] = useState(null);
 
   // Working: UseEffect fetches fav recipes Unliking the recipe
   const GenerateRecipe = async () => {
@@ -56,6 +57,22 @@ const Home = () => {
       setDisableInput(false);
     }
   };
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const res = await fetch("/api/user");
+      if (res.ok) {
+        const data = await res.json();
+        // If you returned lastGeneratedAt directly
+        setLastGenerated(new Date(data.lastGeneratedAt));
+      } else {
+        console.log("Failed to fetch user data");
+      }
+    };
+    fetchUser();
+  }, []);
+
+  console.log("last generated", lastGenerated);
 
   return (
     <div
@@ -110,7 +127,7 @@ const Home = () => {
           </section>
           <section className="w-full">
             {loading && (
-              <div className="md:mt-10 mt-14 w-full-xl">
+              <div className="md:mt-8 mt-14 w-full-xl">
                 <h3 className="font-semibold text-2xl">Generated Recipes</h3>
                 <div className="gen-recipes flex xl:gap-6 md:gap-4 gap-2 md:pt-5 pt-7 justify-between h-full w-full flex-wrap">
                   {arr.map((i) => (
@@ -127,7 +144,7 @@ const Home = () => {
             {/* When no recipes are generate show this: */}
             {noRecipe && <NoRecipe />}
             {genRecipes && recipe.length != 0 && (
-              <div className="md:mt-10 mt-14 w-full-xl">
+              <div className="md:mt-8 mt-14 w-full-xl">
                 <h3 className="font-semibold text-2xl">Generated Recipes</h3>
                 <div className="gen-recipes flex xl:gap-6 md:gap-4 gap-2 md:pt-5 pt-7 justify-between h-full w-full flex-wrap">
                   {recipe.map((recipes) => (

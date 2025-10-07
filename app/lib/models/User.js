@@ -4,14 +4,14 @@ const { Schema, model, models } = mongoose;
 const userSchema = new Schema({
   email: { type: String, required: true },
   name: { type: String },
-  password:{type:String},
+  password: { type: String },
   createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
+  lastGeneratedAt: { type: Date, default: null },
   favorites: [
     {
       type: Object,
       // by default an empty array stands
-      default:[]
+      default: [],
     },
   ],
 });
