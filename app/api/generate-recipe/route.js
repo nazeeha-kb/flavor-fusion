@@ -57,27 +57,33 @@ Respond only with JSON array as described
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "deepseek/deepseek-r1:free",
+          model: "openrouter/auto:free",
           messages: [{ role: "user", content: prompt }],
           temperature: 0.7,
+          max_tokens: 3600
         }),
       }
     );
 
+    // parsing the data recieved in JSON
     const data = await response.json();
-    console.log("🌟 OpenRouter Response:", data);
+    console.log("OpenRouter Response:", data);
 
     // 1. This is getting the raw text
 
     //recipeText is raw string from AI
     const recipeText = data.choices?.[0]?.message?.content ?? "No content";
+    const cleanText = recipeText
+      .trim()
+      .replace(/^```json\s*/, "")
+      .replace(/```$/, "");
 
     let recipe = [];
 
     try {
       // 2. Parsing the text to JSON array
-      recipe = JSON.parse(recipeText);
-      console.log(`parsed recipe: ${recipe}`);
+      recipe = JSON.parse(cleanText);
+      console.log("parsed recipe", recipe);
     } catch (err) {
       console.error(`Failed to parse recipe: ${err}`);
       recipe = []; //fallback to empty array on error
