@@ -15,19 +15,45 @@ const Home = () => {
   const [disableInput, setDisableInput] = useState(false);
   const [lastGenerated, setLastGenerated] = useState(null);
 
-  // Working: UseEffect fetches fav recipes Unliking the recipe
-  const GenerateRecipe = async () => {
-    const ingredientArray = ingredients.split(",").map((item) => item.trim());
-    if (ingredientArray.length === 0) return; //returns the ingredients in an array form
 
-    setLoading(true); //the loading component appears
+  useEffect(() => {
+    const fetchUser = async () => {
+      const res = await fetch("/api/user");
+      if (res.ok) {
+        const data = await res.json();
+        
+        // If you returned lastGeneratedAt directly
+        setLastGenerated(new Date(data.lastGeneratedAt));
+        console.log("previous date", data.lastGeneratedAt)
+        console.log("last generated set to", new Date())
+      } else {
+        console.log("Failed to fetch user data");
+      }
+    };
+    fetchUser();
+  }, []);
+
+  const storeInLocalStorage = (key, item) => {
+    // clear previous recipes
+    localStorage.removeItem(key);
+    // Store the recipe
+    localStorage.setItem(key, item);
+    console.log(item, "stored in LS")
+  }
+
+
+  const GenerateRecipe = async () => {
+
+    const ingredientArray = ingredients.split(",").map((item) => item.trim());
+    if (ingredientArray.length === 0) return; //stop function if no ingredients.
+
+    setLoading(true); //skeleton loader if generating
     setNoRecipe(false);
     setRecipe(""); // clears previous recipes
-    // Disabling the input
-    setDisableInput(true);
+    setDisableInput(true); // Disabling the input field
 
-    // Now we'll fetch the API and generate the recipe:
 
+    // fetch the API and generate the recipe:
     try {
       const res = await fetch("/api/generate-recipe", {
         // fetching details
@@ -39,18 +65,18 @@ const Home = () => {
         }),
       });
 
-      // the response (ai generated recipe) we're getting as data here
+      // store the response (ai generated recipe) in data
       const data = await res.json();
 
-      // const parsedRecipe = parseRecipe(data.recipe);
-      // setParsedRecipe(parsedRecipe);
-      console.log("generated recipe:", data.recipe);
+      // console.log("generated recipe:", data.recipe);
 
-      // updating "recipe" to include the generated recipe
+      // update "recipe" to include the generated recipe
       setRecipe(data.recipe);
-      // };
+      storeInLocalStorage("recipes", JSON.stringify(data.recipe))
+
     } catch (error) {
       console.log(`error generating recipe ${error}`);
+
     } finally {
       setLoading(false);
       setGenRecipes(true);
@@ -58,21 +84,6 @@ const Home = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const res = await fetch("/api/user");
-      if (res.ok) {
-        const data = await res.json();
-        // If you returned lastGeneratedAt directly
-        setLastGenerated(new Date(data.lastGeneratedAt));
-      } else {
-        console.log("Failed to fetch user data");
-      }
-    };
-    fetchUser();
-  }, []);
-
-  console.log("last generated", lastGenerated);
 
   return (
     <div
@@ -93,9 +104,8 @@ const Home = () => {
                 the perfect recipe for you.
               </p>
               <div
-                className={`generator border-1 border-gray-500 rounded-xl p-3  ${
-                  disableInput ? `bg-gray-100 text-gray-500` : `bg-white`
-                }`}
+                className={`generator border-1 border-gray-500 rounded-xl p-3  ${disableInput ? `bg-gray-100 text-gray-500` : `bg-white`
+                  }`}
               >
                 <div className="input-area flex justify-between">
                   <input
@@ -113,11 +123,10 @@ const Home = () => {
                   <button
                     onClick={GenerateRecipe}
                     disabled={disableInput}
-                    className={`cursor-pointer rounded-full w-8 h-8 flex items-center justify-center  transition ${
-                      disableInput
-                        ? `bg-gray-400  hover:bg-none`
-                        : `bg-green-300  hover:bg-green-500`
-                    }`}
+                    className={` rounded-full w-8 h-8 flex items-center justify-center  transition ${disableInput
+                      ? `bg-gray-400  hover:bg-none`
+                      : `bg-green-300  hover:bg-green-500 cursor-pointer`
+                      }`}
                   >
                     <img src="/arrow-up.svg" alt="" className="w-[14px]" />
                   </button>
@@ -141,6 +150,7 @@ const Home = () => {
                 </div>
               </div>
             )}
+
             {/* When no recipes are generate show this: */}
             {noRecipe && <NoRecipe />}
             {genRecipes && recipe.length != 0 && (
@@ -156,13 +166,13 @@ const Home = () => {
                     >
                       <RecipeCard
                         recipe={recipes}
-                        //  onUnlike={handleUnlike}
                       />
                     </div>
                   ))}
                 </div>
               </div>
             )}
+
             {/* If no recipe is generated then show the noGen component - but while the other conditions (&&) are met too */}
             {recipe.length === 0 && !noRecipe && !loading && <NoGenerated />}
           </section>

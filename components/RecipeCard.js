@@ -2,40 +2,33 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import Link from "next/link";
-import { createClient } from "pexels";
 import slugify from "slugify";
 
-const RecipeCard = ({ recipe, isFavorite = false, onUnlike }) => {
+const RecipeCard = ({ recipe, isFavorite = false }) => {
   const [favorite, setFavorite] = useState(isFavorite);
   const [imageUrl, setImageUrl] = useState("");
   const maxToshow = 3;
   const showIngredients = recipe.ingredients.slice(0, maxToshow);
   const remainingCount = recipe.ingredients.length - maxToshow;
-  const pexelsClient = createClient(process.env.NEXT_PUBLIC_PEXELS_API_KEY);
   const recipeSlug = slugify(recipe.title, { lower: true });
 
-  async function fetchImageFromPexels(query) {
-    try {
-      const res = await pexelsClient.photos.search({ query, per_page: 5 });
-      const photo = res.photos?.[0];
-      return photo?.src.medium || "/utensils-canva"; // fallback if no image
-    } catch (err) {
-      console.error("Pexels fetch error", err);
-      return "/utensils-canva";
-    }
-  }
-
-  useEffect(() => {
-    console.log("from recipe card this recipe's slug is:", recipeSlug);
-  });
-
+  // TODO - FIX
   useEffect(() => {
     async function loadImage() {
-      const imageUrl = await fetchImageFromPexels(recipe.title);
-      setImageUrl(imageUrl);
+      try {
+        const res = await fetch(`/api/pexels?query=${encodeURIComponent(recipe.title)}`)
+        const data = await res.json();
+        setImageUrl(data.url); // match the key your API returns
+        console.log("image url", data.url)
+      }
+      catch (err) {
+        console.error("Fetch image failed", err);
+        setImageUrl("/utensils-canva.png")
+      }
     }
     loadImage();
   }, [recipe.title]);
+
 
   // Favorites recipe logic
   const handleLike = async () => {
@@ -63,7 +56,7 @@ const RecipeCard = ({ recipe, isFavorite = false, onUnlike }) => {
     }
   };
 
-  // Handling Unlike here instead of on favs page
+  // Handling Unlike (DELETE) here instead of on favs page
   const handleUnlike = async (recipeId) => {
     const res = await fetch("/api/favorite-actions", {
       method: "DELETE",

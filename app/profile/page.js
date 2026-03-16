@@ -1,7 +1,7 @@
 "use client";
 import CuisineBar from "@/components/CuisineBar";
 import React, { useEffect, useState } from "react";
-import ProfileSection from "@/components/ProfileSection";
+import ProfileGraph from "@/components/ProfileGraph";
 
 const Profile = () => {
   const [favs, setFavs] = useState([]);
@@ -19,14 +19,16 @@ const Profile = () => {
     };
 
     fetchFavorites();
+
   }, []);
 
   useEffect(() => {
+    // Date of joining
     const dateJoin = async () => {
       const res = await fetch("api/user");
       if (res.ok) {
         const data = await res.json();
-        const formattedDate = new Date(data).toLocaleDateString(
+        const formattedDate = new Date(data?.createdAt).toLocaleDateString(
           "en-US",
           {
             year: "numeric",
@@ -35,7 +37,6 @@ const Profile = () => {
           }
         );
         setDate(formattedDate);
-        console.log("data from user is", formattedDate);
       } else {
         console.log("failed to fetch date");
       }
@@ -47,6 +48,7 @@ const Profile = () => {
     <div className="bg-gray-50 px-6 min-h-[83vh]">
       <div className="max-w-7xl flex flex-col justify-center items-center w-full mx-auto">
         <h1 className="font-bold text-3xl mt-10 mb-4">Your Profile</h1>
+        {/* Date of joining */}
         <div className="text-gray-600 text-[18px]">Member since {date}</div>
 
         <section className="w-full mt-4">
@@ -70,7 +72,8 @@ const Profile = () => {
                 <div className="title pb-2 font-semibold text-sm">
                   Last Recipe Generation
                 </div>
-                <div className="font-semibold text-3xl">4 days ago</div>
+                {/* Last generated */}
+                <div className="font-semibold text-3xl">0 days ago</div>
               </div>
               <div className="icon">
                 <span className="material-symbols-outlined text-gray-500">
@@ -81,7 +84,7 @@ const Profile = () => {
           </div>
         </section>
         <section>
-          <ProfileSection/>
+          <ProfileGraph />
           {/* <CuisineBar /> */}
         </section>
       </div>

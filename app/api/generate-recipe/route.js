@@ -57,10 +57,11 @@ Respond only with JSON array as described
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "openrouter/auto:free",
+          // model: "openrouter/free",
+          model: "arcee-ai/trinity-large-preview:free",
           messages: [{ role: "user", content: prompt }],
           temperature: 0.7,
-          max_tokens: 3600
+          max_tokens: 3000
         }),
       }
     );
@@ -73,6 +74,8 @@ Respond only with JSON array as described
 
     //recipeText is raw string from AI
     const recipeText = data.choices?.[0]?.message?.content ?? "No content";
+
+    // stripping unnecassary whitespaces, or other characters to get a proper json.
     const cleanText = recipeText
       .trim()
       .replace(/^```json\s*/, "")
@@ -83,7 +86,6 @@ Respond only with JSON array as described
     try {
       // 2. Parsing the text to JSON array
       recipe = JSON.parse(cleanText);
-      console.log("parsed recipe", recipe);
     } catch (err) {
       console.error(`Failed to parse recipe: ${err}`);
       recipe = []; //fallback to empty array on error

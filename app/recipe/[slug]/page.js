@@ -16,14 +16,22 @@ const RecipePage = () => {
     const fetchRecipe = async () => {
       // If i don't do "JSON.parse - the recipe returns as a string"
       try {
+
+        // Get the recipe from local storage.
         const storedRecipes =
           JSON.parse(localStorage.getItem("recipes")) ||
           "⛔ no recipes in localStorage";
+
+        console.log(storedRecipes)
+
         const recipe = storedRecipes.find((recipe) => recipe.title);
+
         const recipeTitle = recipe.title;
         const recipeSlug = slugify(recipeTitle, { lower: true });
-        // setLocalRecipes(storedRecipes);
+
+
         const res = await fetch(`/api/recipe/${slug}`);
+
         if (!res.ok) {
           setNoRecipe(true);
           console.log("the slug is", slug);
