@@ -1,11 +1,12 @@
-"use client"
-import { SessionProvider } from "next-auth/react"
-import { Children } from "react"
+"use client";
 
-export default function SessionWrapper({children}) {
+import { SessionProvider } from "next-auth/react";
+import { GuestSessionProvider } from "@/components/guestSessionContext";
+
+export default function SessionWrapper({ children }) {
   return (
-    <SessionProvider >
-     {children}
+    <SessionProvider>
+      <GuestSessionProvider>{children}</GuestSessionProvider>
     </SessionProvider>
-  )
+  );
 }

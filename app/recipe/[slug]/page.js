@@ -2,61 +2,63 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import Loading from "@/components/Loading";
 import slugify from "slugify";
 import SkeletonRecipePage from "@/components/SkeletonRecipePage";
+import { useGuestSession } from "@/components/guestSessionContext";
+import { getRecipes } from "@/lib/storage/recipeRepository";
 
 const RecipePage = () => {
   const router = useRouter();
-  const { slug } = useParams(); // dynamic part of the URL
+  const { slug } = useParams();
   const [recipe, setRecipe] = useState(null);
   const [noRecipe, setNoRecipe] = useState(false);
+  const { isGuest } = useGuestSession();
 
   useEffect(() => {
     const fetchRecipe = async () => {
-      // If i don't do "JSON.parse - the recipe returns as a string"
       try {
+        const favoriteRecipes = await getRecipes({ isGuest });
+        const foundFavorite = favoriteRecipes.find(
+          (item) => item.slug === slug || slugify(item.title, { lower: true }) === slug
+        );
 
-        // Get the recipe from local storage.
-        const storedRecipes =
-          JSON.parse(localStorage.getItem("recipes")) ||
-          "⛔ no recipes in localStorage";
-
-        console.log(storedRecipes)
-
-        const recipe = storedRecipes.find((recipe) => recipe.title);
-
-        const recipeTitle = recipe.title;
-        const recipeSlug = slugify(recipeTitle, { lower: true });
-
-
-        const res = await fetch(`/api/recipe/${slug}`);
-
-        if (!res.ok) {
-          setNoRecipe(true);
-          console.log("the slug is", slug);
-          console.log("response is", res);
-          console.log("Recipe not found");
+        if (foundFavorite) {
+          setRecipe(foundFavorite);
+          setNoRecipe(false);
+          return;
         }
-        const data = await res.json();
-        if (data != "not found") {
-          setRecipe(data);
-          console.log("recipe is set to", data);
+
+        const storedRecipes = JSON.parse(localStorage.getItem("recipes")) || [];
+        const foundGeneratedRecipe = Array.isArray(storedRecipes)
+          ? storedRecipes.find((item) => slugify(item.title, { lower: true }) === slug)
+          : null;
+
+        if (foundGeneratedRecipe) {
+          setRecipe(foundGeneratedRecipe);
+          setNoRecipe(false);
+          return;
+        }
+
+        if (!isGuest) {
+          const res = await fetch(`/api/recipe/${slug}`);
+          const data = await res.json();
+          if (!res.ok || data === "not found") {
+            setNoRecipe(true);
+          } else {
+            setRecipe(data);
+            setNoRecipe(false);
+          }
         } else {
-          const foundRecipe = storedRecipes.find(
-            (recipe) => recipeSlug === slug
-          );
-          setRecipe(foundRecipe);
-          console.log("the recipe is:", foundRecipe);
+          setNoRecipe(true);
         }
-        console.log("the slug is", slug);
-        console.log("🍚 the recipe you're viewing is:", data);
       } catch (err) {
         console.log(err);
+        setNoRecipe(true);
       }
     };
+
     fetchRecipe();
-  }, [slug]);
+  }, [slug, isGuest]);
 
   // useEffect(() => {
   //   console.log("the local recipes are", localRecipes);

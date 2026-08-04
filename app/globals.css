@@ -1,10 +1,18 @@
 @import "tailwindcss";
-/* 
-.material-symbols-outlined {
-  font-variation-settings:
-  'FILL' 0,
-  'wght' 400,
-  'GRAD' 0,
-  'opsz' 24
+
+:root {
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
 }
- */
+
+body {
+  background-color: #f9fafb;
+  /* existing app background */
+}
+
+/* Headings use the display face; everything else inherits the body face */
+h1,
+h2,
+h3 {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+}

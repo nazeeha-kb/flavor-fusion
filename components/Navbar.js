@@ -1,46 +1,48 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useSession, signIn, signOut, status } from "next-auth/react";
+import { usePathname, useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
+import { useGuestSession } from "@/components/guestSessionContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const { isGuest, isAuthenticated, exitGuestMode } = useGuestSession();
+  const isSignedIn = isAuthenticated || isGuest;
 
-  const { data: session } = useSession();
+  const handleSignOut = () => {
+    if (isGuest) {
+      exitGuestMode();
+      router.push("/signin");
+      return;
+    }
+
+    signOut({ callbackUrl: "/signin" });
+  };
 
   return (
     <div>
       <nav className=" border-b-1 border-gray-300">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-          {session && (
-            <Link
-              href={"/home"}
-              className="flex items-center space-x-3 rtl:space-x-reverse"
-            >
-              <div className="bg-green-600 rounded-full w-10 h-10 flex items-center justify-center">
-                <img src="/utensils.svg" className="w-5 text-white" alt="" />
-              </div>
-              <span className="self-center text-2xl font-bold whitespace-nowrap text-gray-700">
-                FlavorFusion
+          <Link
+            href={isSignedIn ? "/home" : "/"}
+            className="flex items-center space-x-3 rtl:space-x-reverse"
+          >
+            <div className="bg-green-600 rounded-full w-10 h-10 flex items-center justify-center">
+              <img src="/utensils.svg" className="w-5 text-white" alt="" />
+            </div>
+            <span className="self-center text-2xl font-bold whitespace-nowrap text-gray-700">
+              FlavorFusion
+            </span>
+            {isGuest && (
+              <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-700">
+                Guest
               </span>
-            </Link>
-          )}
-          {!session && (
-            <Link
-              href={"/"}
-              className="flex items-center space-x-3 rtl:space-x-reverse"
-            >
-              <div className="bg-green-600 rounded-full w-10 h-10 flex items-center justify-center">
-                <img src="/utensils.svg" className="w-5 text-white" alt="" />
-              </div>
-              <span className="self-center text-2xl font-bold whitespace-nowrap text-gray-700">
-                FlavorFusion
-              </span>
-            </Link>
-          )}
-          {session && (
+            )}
+          </Link>
+          {isSignedIn && (
             <>
               <button
                 onClick={() => setIsOpen(!isOpen)}
@@ -65,11 +67,10 @@ const Navbar = () => {
                 </svg>
               </button>
               <div
-                className={`${
-                  isOpen ? "block" : "hidden"
-                } w-full md:block md:w-auto`}
+                className={`${isOpen ? "block" : "hidden"
+                  } w-full md:block md:w-auto`}
               >
-                <ul className="font-medium flex flex-col md:p-0 border border-gray-100 rounded-lg md:flex-row md:space-x-4 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-whitedark:border-gray-700 mt-6 bg-green-50 md:bg-white">
+                <ul className="font-medium flex flex-col md:p-0 border border-gray-100 rounded-lg md:flex-row md:space-x-4 rtl:space-x-reverse md:mt-0 md:border-0 dark:border-gray-700 mt-6 md:bg-transparent bg-white">
                   <li>
                     <Link
                       href={"/home"}
@@ -115,7 +116,7 @@ const Navbar = () => {
                     }
                   >
                     <button
-                      onClick={() => signOut({ callbackUrl: "/" })}
+                      onClick={handleSignOut}
                       className="block py-2 px-3 rounded-xl md:border-0 text-black  hover:bg-emerald-300 transition cursor-pointer"
                     >
                       <div className="flex gap-2">
@@ -124,7 +125,7 @@ const Navbar = () => {
                           alt=""
                           className="w-4 text-gray-200"
                         />
-                        <span>Sign Out</span>
+                        <span>{isGuest ? "Exit Guest" : "Sign Out"}</span>
                       </div>
                     </button>
                   </li>

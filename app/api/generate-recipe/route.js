@@ -1,3 +1,100 @@
+function extractJsonCandidate(text) {
+  if (!text || !text.trim()) {
+    return { ok: false, error: "Gemini returned an empty response." };
+  }
+
+  let normalized = text.trim();
+  normalized = normalized.replace(/```(?:json)?/gi, "").trim();
+  normalized = normalized.replace(/^json\s*/i, "").trim();
+
+  if (!normalized) {
+    return { ok: false, error: "Gemini returned an empty response." };
+  }
+
+  const candidateStart = Math.min(
+    normalized.indexOf("["),
+    normalized.indexOf("{")
+  );
+
+  if (candidateStart === -1) {
+    return { ok: false, error: "Gemini response did not contain JSON data." };
+  }
+
+  const opening = normalized[candidateStart];
+  const closing = opening === "[" ? "]" : "}";
+  let depth = 0;
+  let inString = false;
+  let escapeNext = false;
+  let endIndex = -1;
+
+  for (let index = candidateStart; index < normalized.length; index += 1) {
+    const char = normalized[index];
+
+    if (inString) {
+      if (escapeNext) {
+        escapeNext = false;
+      } else if (char === "\\") {
+        escapeNext = true;
+      } else if (char === '"') {
+        inString = false;
+      }
+      continue;
+    }
+
+    if (char === '"') {
+      inString = true;
+      continue;
+    }
+
+    if (char === opening) {
+      depth += 1;
+    } else if (char === closing) {
+      depth -= 1;
+      if (depth === 0) {
+        endIndex = index;
+        break;
+      }
+    }
+  }
+
+  if (endIndex === -1) {
+    return {
+      ok: false,
+      error: "Gemini response was truncated before a complete JSON block was closed.",
+    };
+  }
+
+  let candidate = normalized.slice(candidateStart, endIndex + 1).trim();
+  candidate = candidate.replace(/,\s*([}\]])/g, "$1");
+
+  return { ok: true, value: candidate };
+}
+
+function parseRecipeResponse(text) {
+  if (!text || !text.trim()) {
+    return { recipe: [], error: "Gemini returned an empty response." };
+  }
+
+  const extracted = extractJsonCandidate(text);
+  if (!extracted.ok) {
+    return { recipe: [], error: extracted.error };
+  }
+
+  try {
+    const parsed = JSON.parse(extracted.value);
+    if (!Array.isArray(parsed)) {
+      return { recipe: [], error: "Gemini response did not contain a JSON array." };
+    }
+
+    return { recipe: parsed };
+  } catch (error) {
+    return {
+      recipe: [],
+      error: `Invalid JSON returned by Gemini: ${error.message}`,
+    };
+  }
+}
+
 export async function POST(req) {
   const body = await req.json();
   console.log("🧾 Request body:", body);
@@ -14,93 +111,97 @@ export async function POST(req) {
     const prompt = `
 Generate 3 distinct and simple, classic recipes using the following ingredients as the primary base: ${ingredients.join(
       ", "
-    )}You may freely add complementary ingredients to make each recipe realistic and flavorful.
+    )}. You may freely add complementary ingredients to make each recipe realistic and flavorful.
 
-    Indian cuisine influence is the priority — however, you can create globally inspired or fusion dishes.
+Indian cuisine influence is the priority, but you can create globally inspired or fusion dishes.
 
-Each recipe should include:
-- a unique ID (uuid v4) for the recipe
+Each recipe must include:
+- id (uuid v4)
 - title
-- expected time
-- dish classification (breakfast, lunch, dinner, dessert, other)
-- ingredients list (as an array) in the format (ingredinet - measure)
-- step-by-step instructions (as an array)
+- expectedTime
+- classification
+- ingredients (array of strings in the format "ingredient - measure")
+- instructions (array of strings)
 
-Important:
-- If the exact ingredients don’t form a full dish, you must still generate 3 recipes by adding appropriate supporting ingredients. 
-- It is OK to omit or creatively adapt any ingredient if it doesn't fit well.
-- Never return an empty array under any circumstances.
+Requirements:
+- Return exactly 3 recipes.
+- Never return an empty array.
+- Do not include markdown, code fences, headings, notes, or explanations.
+- Return only valid JSON. The response must be a single JSON array with no surrounding text.
 
-Return the response as a JSON array of recipe objects like this:
-
+Example schema:
 [
   {
-  "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
     "title": "Recipe 1 Title",
     "expectedTime": "30 minutes",
     "classification": "Lunch",
-    "ingredients": ["ingredient1", "ingredient2"],
+    "ingredients": ["ingredient1 - 1 cup", "ingredient2 - 2 tbsp"],
     "instructions": ["Step 1", "Step 2"]
-  },
-  {...}, {...}
+  }
 ]
-.
-Respond only with JSON array as described
 `;
 
     const response = await fetch(
-      "https://openrouter.ai/api/v1/chat/completions",
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          // model: "openrouter/free",
-          model: "arcee-ai/trinity-large-preview:free",
-          messages: [{ role: "user", content: prompt }],
-          temperature: 0.7,
-          max_tokens: 3000
+          contents: [
+            {
+              role: "user",
+              parts: [{ text: prompt }],
+            },
+          ],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 4000,
+          },
         }),
       }
     );
 
-    // parsing the data recieved in JSON
     const data = await response.json();
-    console.log("OpenRouter Response:", data);
+    console.log("Gemini raw response:", data);
 
-    // 1. This is getting the raw text
-
-    //recipeText is raw string from AI
-    const recipeText = data.choices?.[0]?.message?.content ?? "No content";
-
-    // stripping unnecassary whitespaces, or other characters to get a proper json.
-    const cleanText = recipeText
-      .trim()
-      .replace(/^```json\s*/, "")
-      .replace(/```$/, "");
-
-    let recipe = [];
-
-    try {
-      // 2. Parsing the text to JSON array
-      recipe = JSON.parse(cleanText);
-    } catch (err) {
-      console.error(`Failed to parse recipe: ${err}`);
-      recipe = []; //fallback to empty array on error
+    const finishReason = data?.candidates?.[0]?.finishReason;
+    if (finishReason === "MAX_TOKENS") {
+      console.error("Gemini response was truncated because the model hit MAX_TOKENS.");
+      return new Response(
+        JSON.stringify({
+          recipe: [],
+          message:
+            "Gemini response was truncated. Please try again with shorter ingredients or a slightly simpler request.",
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
-    // 3. Returning the parsed recipe to the frontend
-    return new Response(JSON.stringify({ recipe }), {
+    const recipeText =
+      data?.candidates?.[0]?.content?.parts?.map((part) => part.text).join("") ?? "";
+
+    console.log("Gemini extracted text:", recipeText);
+
+    const parseCandidate = extractJsonCandidate(recipeText);
+    console.log("Gemini parse input:", parseCandidate.ok ? parseCandidate.value : recipeText);
+
+    const parsed = parseRecipeResponse(recipeText);
+
+    return new Response(JSON.stringify({ recipe: parsed.recipe, message: parsed.error }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("🛑 OpenRouter Error:", error);
+    console.error("🛑 Gemini Error:", error);
 
     return new Response(
-      JSON.stringify({ message: "OpenRouter error", error: error.message }),
+      JSON.stringify({ message: "Gemini error", error: error.message }),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },

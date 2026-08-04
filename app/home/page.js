@@ -4,6 +4,7 @@ import NoRecipe from "@/components/NoRecipe";
 import RecipeCard from "@/components/RecipeCard";
 import NoGenerated from "@/components/NoGenerated";
 import SkeletonLoader from "@/components/SkeletonLoader";
+import { useGuestSession } from "@/components/guestSessionContext";
 
 const Home = () => {
   const arr = [1, 2, 3];
@@ -14,14 +15,14 @@ const Home = () => {
   const [genRecipes, setGenRecipes] = useState(false);
   const [disableInput, setDisableInput] = useState(false);
   const [lastGenerated, setLastGenerated] = useState(null);
-
+  const { isGuest } = useGuestSession();
 
   useEffect(() => {
     const fetchUser = async () => {
       const res = await fetch("/api/user");
       if (res.ok) {
         const data = await res.json();
-        
+
         // If you returned lastGeneratedAt directly
         setLastGenerated(new Date(data.lastGeneratedAt));
         console.log("previous date", data.lastGeneratedAt)
