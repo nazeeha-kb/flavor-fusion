@@ -1,4 +1,3 @@
-import { SiteHeader } from "@/components/landing/SiteHeader";
 import { Hero } from "@/components/landing/Hero";
 import { HowItWorks } from "@/components/landing/HowItWorks";
 import { Features } from "@/components/landing/Features";
@@ -10,7 +9,6 @@ import { SiteFooter } from "@/components/landing/SiteFooter";
 export default function LandingPage() {
   return (
     <main className="min-h-screen bg-white">
-      <SiteHeader />
       <Hero />
       <div id="how-it-works">
         <HowItWorks />
@@ -18,12 +16,12 @@ export default function LandingPage() {
       <div id="features">
         <Features />
       </div>
-      <div id="recipes">
+      {/* <div id="recipes">
         <RecipePreview />
-      </div>
+      </div> */}
       <WhyFlavorFusion />
       <FinalCTA />
-      <SiteFooter />
+      {/* <SiteFooter /> */}
     </main>
   );
 }

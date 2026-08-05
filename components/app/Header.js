@@ -4,8 +4,9 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useGuestSession } from "@/components/guestSessionContext";
+import Logo from "./Logo";
 
-const Navbar = () => {
+const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -26,22 +27,16 @@ const Navbar = () => {
     <div>
       <nav className=" border-b-1 border-gray-300">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-          <Link
+          <Logo
             href={isSignedIn ? "/home" : "/"}
-            className="flex items-center space-x-3 rtl:space-x-reverse"
-          >
-            <div className="bg-green-600 rounded-full w-10 h-10 flex items-center justify-center">
-              <img src="/utensils.svg" className="w-5 text-white" alt="" />
-            </div>
-            <span className="self-center text-2xl font-bold whitespace-nowrap text-gray-700">
-              FlavorFusion
-            </span>
-            {isGuest && (
-              <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-700">
-                Guest
-              </span>
-            )}
-          </Link>
+            action={
+              isGuest && (
+                <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-700">
+                  Guest
+                </span>
+              )
+            }
+          />
           {isSignedIn && (
             <>
               <button
@@ -70,7 +65,7 @@ const Navbar = () => {
                 className={`${isOpen ? "block" : "hidden"
                   } w-full md:block md:w-auto`}
               >
-                <ul className="font-medium flex flex-col md:p-0 border border-gray-100 rounded-lg md:flex-row md:space-x-4 rtl:space-x-reverse md:mt-0 md:border-0 dark:border-gray-700 mt-6 md:bg-transparent bg-white">
+                <ul className="font-medium flex flex-col md:p-0 border border-gray-100 rounded-lg md:flex-row md:space-x-4 rtl:space-x-reverse md:mt-0 mt-6 md:bg-transparent bg-white">
                   <li>
                     <Link
                       href={"/home"}
@@ -139,4 +134,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Header;

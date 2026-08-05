@@ -16,9 +16,9 @@ const sizeStyles = {
 };
 
 export const Button = React.forwardRef(
-  ({ className, variant = "primary", size = "default", path, ...props }, ref) => {
+  ({ className, variant = "primary", size = "default", href, ...props }, ref) => {
     return (
-      <Link href={path ? `/${path}` : "/"}
+      <Link href={href ? href : "/"}
         ref={ref}
         className={cn(
           "inline-flex items-center justify-center gap-2 rounded-full font-medium",

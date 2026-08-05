@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/link-button";
 
 export function FinalCTA() {
   return (
-    <section className="bg-white py-20 sm:py-24">
+    <section id="final-cta" className="bg-white py-20 sm:py-24">
       <div className="mx-auto max-w-3xl px-6 text-center">
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-50">
           <Sparkles className="h-5 w-5 text-green-600" />

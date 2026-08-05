@@ -88,12 +88,12 @@ export function Hero() {
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button size="lg">
+            <Button href="/signin" size="lg">
               Generate Recipe
               <ArrowRight className="h-4 w-4" />
             </Button>
             <Button size="lg" variant="secondary">
-              Explore Recipes
+              Explore Features
             </Button>
           </div>
 

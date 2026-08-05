@@ -1,8 +1,7 @@
 import { Geist, Geist_Mono, Plus_Jakarta_Sans, Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import SessionWrapper from "@/components/sessionWrapper";
+import MainLayout from "@/components/layout/MainLayout";
 
 
 const geistSans = Geist({
@@ -35,6 +34,7 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${display.variable} ${body.variable}`}>
       <head>
@@ -48,9 +48,7 @@ export default function RootLayout({ children }) {
         className={`font-body antialiased`}
       >
         <SessionWrapper>
-          <Navbar />
-          <div className="min-h-[83vh]">{children}</div>
-          <Footer />
+          <MainLayout children={children} />
         </SessionWrapper>
       </body>
     </html>
