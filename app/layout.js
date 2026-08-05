@@ -48,7 +48,9 @@ export default function RootLayout({ children }) {
         className={`font-body antialiased`}
       >
         <SessionWrapper>
-          <MainLayout/>
+          <MainLayout>
+            {children}
+          </MainLayout>
         </SessionWrapper>
       </body>
     </html>
