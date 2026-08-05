@@ -42,7 +42,7 @@ const Header = () => {
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 type="button"
-                className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden  focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:focus:ring-gray-600"
+                className="inline-flex items-center justify-center rounded-full border border-gray-200 bg-white p-2.5 text-gray-700 shadow-sm transition hover:bg-gray-50 hover:text-green-600 focus:outline-none focus:ring-2 focus:ring-green-500/20 md:hidden"
               >
                 <span className="sr-only">Open main menu</span>
                 <svg
@@ -63,16 +63,16 @@ const Header = () => {
               </button>
               <div
                 className={`${isOpen ? "block" : "hidden"
-                  } w-full md:block md:w-auto`}
+                  } w-full md:block md:w-auto mt-3 md:mt-0`}
               >
-                <ul className="font-medium flex flex-col md:p-0 border border-gray-100 rounded-lg md:flex-row md:space-x-4 rtl:space-x-reverse md:mt-0 mt-6 md:bg-transparent bg-white">
+                <ul className="font-medium flex flex-col gap-1.5 overflow-hidden rounded-2xl border border-gray-200 bg-white p-2 shadow-sm md:flex-row md:space-x-4 md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none md:mt-0 mt-0">
                   <li>
                     <Link
                       href={"/home"}
                       className={
                         pathname === "/home"
-                          ? "text-white block py-2 px-3 rounded-xl bg-green-600"
-                          : "block py-2 px-3 text-black rounded-xl md:bg-transparent md:dark:text hover:bg-gray-200"
+                          ? "block rounded-xl bg-green-600 px-3 py-2.5 text-white"
+                          : "block rounded-xl px-3 py-2.5 text-gray-700 transition hover:bg-gray-100 md:bg-transparent md:text-black"
                       }
                       aria-current="page"
                     >
@@ -84,8 +84,8 @@ const Header = () => {
                       href={"/favorites"}
                       className={
                         pathname === "/favorites"
-                          ? "text-white block py-2 px-3 rounded-xl bg-green-600"
-                          : "block py-2 px-3 text-black rounded-xl md:bg-transparent md:dark:text hover:bg-gray-200"
+                          ? "block rounded-xl bg-green-600 px-3 py-2.5 text-white"
+                          : "block rounded-xl px-3 py-2.5 text-gray-700 transition hover:bg-gray-100 md:bg-transparent md:text-black"
                       }
                     >
                       Favorites
@@ -96,8 +96,8 @@ const Header = () => {
                       href={"/profile"}
                       className={
                         pathname === "/profile"
-                          ? "text-white block py-2 px-3 rounded-xl bg-green-600"
-                          : "block py-2 px-3 text-black rounded-xl md:bg-transparent md:dark:text hover:bg-gray-200"
+                          ? "block rounded-xl bg-green-600 px-3 py-2.5 text-white"
+                          : "block rounded-xl px-3 py-2.5 text-gray-700 transition hover:bg-gray-100 md:bg-transparent md:text-black"
                       }
                     >
                       Profile
@@ -112,7 +112,7 @@ const Header = () => {
                   >
                     <button
                       onClick={handleSignOut}
-                      className="block py-2 px-3 rounded-xl md:border-0 text-black  hover:bg-emerald-300 transition cursor-pointer"
+                      className="block w-full rounded-xl px-3 py-2.5 text-left text-gray-700 transition hover:bg-emerald-50 hover:text-emerald-700 md:border-0 md:text-black"
                     >
                       <div className="flex gap-2">
                         <img
