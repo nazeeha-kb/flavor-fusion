@@ -18,6 +18,10 @@ const Home = () => {
   const { isGuest } = useGuestSession();
 
   useEffect(() => {
+    console.log(process.env.MONGODB_URI?.split("@")[1]);
+  })
+
+  useEffect(() => {
     const fetchUser = async () => {
       const res = await fetch("/api/user");
       if (res.ok) {
