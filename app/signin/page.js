@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import Loading from "@/components/Loading";
+import Loading from "@/components/app/Loading";
 import { useGuestSession } from "@/components/guestSessionContext";
 
 export default function SigninPage() {

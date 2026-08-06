@@ -7,13 +7,6 @@ const userSchema = new Schema({
   password: { type: String },
   createdAt: { type: Date, default: Date.now },
   lastGeneratedAt: { type: Date, default: null },
-  favorites: [
-    {
-      type: Object,
-      // by default an empty array stands
-      default: [],
-    },
-  ],
 });
 
 const User = models.User || model("User", userSchema);

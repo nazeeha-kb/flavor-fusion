@@ -1,6 +1,6 @@
 import { Sparkles, ArrowRight, Clock, ChefHat } from "lucide-react";
 import { Button } from "@/components/ui/link-button";
-import { IngredientChip } from "@/components/IngredientChip";
+import { IngredientChip } from "@/components/landing/IngredientChip";
 import { Badge } from "@/components/ui/badge";
 
 const orbitingIngredients = [

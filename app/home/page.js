@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import NoRecipe from "@/components/NoRecipe";
-import RecipeCard from "@/components/RecipeCard";
-import NoGenerated from "@/components/NoGenerated";
+import NoRecipe from "@/components/home/NoRecipe";
+import RecipeCard from "@/components/home/RecipeCard";
+import NoGenerated from "@/components/home/NoGenerated";
 import SkeletonLoader from "@/components/SkeletonLoader";
 import { useGuestSession } from "@/components/guestSessionContext";
 
@@ -17,9 +17,6 @@ const Home = () => {
   const [lastGenerated, setLastGenerated] = useState(null);
   const { isGuest } = useGuestSession();
 
-  useEffect(() => {
-    console.log(process.env.MONGODB_URI?.split("@")[1]);
-  })
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -36,14 +33,14 @@ const Home = () => {
       }
     };
     fetchUser();
-  }, []);
+  }, [genRecipes]);
 
   const storeInLocalStorage = (key, item) => {
     // clear previous recipes
     localStorage.removeItem(key);
     // Store the recipe
     localStorage.setItem(key, item);
-    console.log(item, "stored in LS")
+    console.log(item, "stored in Local Storage")
   }
 
 

@@ -39,9 +39,16 @@ const authOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.email = user.email;
+        await dbConnect();
+
+        const dbUser = await User.findOne({
+          email: user.email,
+        });
+
+        token.id = dbUser._id.toString();
+        token.email = dbUser.email;
       }
+
       return token;
     },
 

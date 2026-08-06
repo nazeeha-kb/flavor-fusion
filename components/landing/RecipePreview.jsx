@@ -1,4 +1,4 @@
-import RecipeCard from "@/components/RecipeCard";
+import RecipeCard from "@/components/home/RecipeCard";
 import { Button } from "@/components/ui/link-button";
 import { ArrowRight } from "lucide-react";
 

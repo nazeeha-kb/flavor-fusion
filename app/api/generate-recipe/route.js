@@ -1,10 +1,23 @@
+// Prompt
+import { buildRecipePrompt } from "@/lib/prompts/recipeGenPrompt";
+// Models
+import User from "@/app/lib/models/User";
+import GenerationActivity from "@/app/lib/models/GenerationActivity";
+// next auth
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]/route";
+// db connect
+import dbConnect from "@/app/lib/dbConnect";
+
 function extractJsonCandidate(text) {
   if (!text || !text.trim()) {
     return { ok: false, error: "Gemini returned an empty response." };
   }
 
   let normalized = text.trim();
+  // removes markdown code fences
   normalized = normalized.replace(/```(?:json)?/gi, "").trim();
+  // removes stray leading json
   normalized = normalized.replace(/^json\s*/i, "").trim();
 
   if (!normalized) {
@@ -96,8 +109,12 @@ function parseRecipeResponse(text) {
 }
 
 export async function POST(req) {
+  await dbConnect()
+
+  const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/"
+  const GEMINI_MODEL = "gemini-3.5-flash";
+
   const body = await req.json();
-  console.log("🧾 Request body:", body);
   const { ingredients } = body;
 
   if (!ingredients || !ingredients.length) {
@@ -108,42 +125,10 @@ export async function POST(req) {
   }
 
   try {
-    const prompt = `
-Generate 3 distinct and simple, classic recipes using the following ingredients as the primary base: ${ingredients.join(
-      ", "
-    )}. You may freely add complementary ingredients to make each recipe realistic and flavorful.
-
-Indian cuisine influence is the priority, but you can create globally inspired or fusion dishes.
-
-Each recipe must include:
-- id (uuid v4)
-- title
-- expectedTime
-- classification
-- ingredients (array of strings in the format "ingredient - measure")
-- instructions (array of strings)
-
-Requirements:
-- Return exactly 3 recipes.
-- Never return an empty array.
-- Do not include markdown, code fences, headings, notes, or explanations.
-- Return only valid JSON. The response must be a single JSON array with no surrounding text.
-
-Example schema:
-[
-  {
-    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-    "title": "Recipe 1 Title",
-    "expectedTime": "30 minutes",
-    "classification": "Lunch",
-    "ingredients": ["ingredient1 - 1 cup", "ingredient2 - 2 tbsp"],
-    "instructions": ["Step 1", "Step 2"]
-  }
-]
-`;
+    const prompt = buildRecipePrompt(ingredients);
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `${GEMINI_URL}${GEMINI_MODEL}:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: "POST",
         headers: {
@@ -165,7 +150,6 @@ Example schema:
     );
 
     const data = await response.json();
-    console.log("Gemini raw response:", data);
 
     const finishReason = data?.candidates?.[0]?.finishReason;
     if (finishReason === "MAX_TOKENS") {
@@ -183,15 +167,16 @@ Example schema:
       );
     }
 
+
     const recipeText =
       data?.candidates?.[0]?.content?.parts?.map((part) => part.text).join("") ?? "";
 
-    console.log("Gemini extracted text:", recipeText);
-
-    const parseCandidate = extractJsonCandidate(recipeText);
-    console.log("Gemini parse input:", parseCandidate.ok ? parseCandidate.value : recipeText);
-
     const parsed = parseRecipeResponse(recipeText);
+
+    // Save generation activity
+    if (parsed.recipe.length > 0) {
+      await saveGenerationActivity(parsed.recipe);
+    }
 
     return new Response(JSON.stringify({ recipe: parsed.recipe, message: parsed.error }), {
       status: 200,
@@ -208,4 +193,26 @@ Example schema:
       }
     );
   }
+}
+
+async function saveGenerationActivity(recipes) {
+
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.id) {
+    return; // Guest or not signed in
+  }
+
+  const userId = session.user.id;
+
+
+  await GenerationActivity.create({
+    userId,
+    recipeCount: recipes.length,
+  });
+
+  await User.findByIdAndUpdate(userId, {
+    lastGeneratedAt: new Date(),
+  });
+
 }

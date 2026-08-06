@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import slugify from "slugify";
-import SkeletonRecipePage from "@/components/SkeletonRecipePage";
+import SkeletonRecipePage from "@/components/home/SkeletonRecipePage";
 import { useGuestSession } from "@/components/guestSessionContext";
 import { getRecipes } from "@/lib/storage/recipeRepository";
 

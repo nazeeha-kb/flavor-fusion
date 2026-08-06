@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import RecipeCards from "@/components/RecipeCard";
+import RecipeCards from "@/components/home/RecipeCard";
 import NoFavs from "@/components/NoFavs";
 import SkeletonLoader from "@/components/SkeletonLoader";
 import { useGuestSession } from "@/components/guestSessionContext";

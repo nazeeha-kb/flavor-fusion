@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const CuisineBar = () => {
+const Chart = () => {
   const data = [
     { cuisine: "Chicken", count: 14 },
     { cuisine: "Mutton", count: 9 },
@@ -38,4 +38,4 @@ const CuisineBar = () => {
   );
 };
 
-export default CuisineBar;
+export default Chart;

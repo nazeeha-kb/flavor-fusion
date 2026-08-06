@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import ProfileGraph from "@/components/ProfileGraph";
+import ProfileChart from "@/components/chart/ProfileChart";
 import { useGuestSession } from "@/components/guestSessionContext";
 import { getRecipes } from "@/lib/storage/recipeRepository";
 
@@ -85,7 +85,7 @@ const Profile = () => {
           </div>
         </section>
         <section>
-          <ProfileGraph />
+          <ProfileChart />
         </section>
       </div>
     </div>
