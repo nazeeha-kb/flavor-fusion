@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ProfileChart from "@/components/chart/ProfileChart";
 import { useGuestSession } from "@/components/guestSessionContext";
 import { getRecipes } from "@/lib/storage/recipeRepository";
@@ -7,6 +7,10 @@ import { getRecipes } from "@/lib/storage/recipeRepository";
 const Profile = () => {
   const [favs, setFavs] = useState([]);
   const [date, setDate] = useState("");
+  const [lastGenerated, setLastGenerated] = useState(null);
+  const [activity, setActivity] = useState([]);
+  const [activityLoading, setActivityLoading] = useState(false);
+  const [activityError, setActivityError] = useState("");
   const { isGuest, isAuthenticated } = useGuestSession();
 
   useEffect(() => {
@@ -25,25 +29,80 @@ const Profile = () => {
   useEffect(() => {
     if (!isAuthenticated) {
       setDate(isGuest ? "Guest" : "");
+      setLastGenerated(null);
       return;
     }
 
-    const dateJoin = async () => {
-      const res = await fetch("/api/user");
-      if (res.ok) {
+    const fetchProfileData = async () => {
+      try {
+        const res = await fetch("/api/user");
+        if (!res.ok) {
+          throw new Error("Failed to fetch user profile data");
+        }
+
         const data = await res.json();
         const formattedDate = new Date(data?.createdAt).toLocaleDateString("en-US", {
           year: "numeric",
           month: "long",
           day: "numeric",
         });
+
         setDate(formattedDate);
-      } else {
-        console.log("failed to fetch date");
+        setLastGenerated(data?.lastGeneratedAt ? new Date(data.lastGeneratedAt) : null);
+      } catch (error) {
+        console.error("failed to fetch profile data", error);
       }
     };
-    dateJoin();
+
+    fetchProfileData();
   }, [isAuthenticated, isGuest]);
+
+  useEffect(() => {
+    if (!isAuthenticated || isGuest) {
+      setActivity([]);
+      setActivityError("");
+      return;
+    }
+
+    const fetchActivity = async () => {
+      setActivityLoading(true);
+      setActivityError("");
+
+      try {
+        const res = await fetch("/api/activity");
+
+        if (!res.ok) {
+          throw new Error("Unable to load activity data");
+        }
+
+        const data = await res.json();
+        setActivity(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("failed to fetch activity", error);
+        setActivity([]);
+        setActivityError("We couldn’t load your generation activity right now.");
+      } finally {
+        setActivityLoading(false);
+      }
+    };
+
+    fetchActivity();
+  }, [isAuthenticated, isGuest]);
+
+  const lastGeneratedLabel = useMemo(() => {
+    if (!lastGenerated) {
+      return "No generations yet";
+    }
+
+    const differenceMs = Date.now() - lastGenerated.getTime();
+    const days = Math.max(0, Math.floor(differenceMs / (1000 * 60 * 60 * 24)));
+
+    if (days === 0) {
+      return "Today";
+    }
+
+    return `${days} day${days === 1 ? "" : "s"} ago`;
+  }, [lastGenerated]);
 
   return (
     <div className="bg-gray-50 px-6 min-h-[83vh]">
@@ -74,7 +133,7 @@ const Profile = () => {
                 <div className="title pb-2 font-semibold text-sm">
                   Last Recipe Generation
                 </div>
-                <div className="font-semibold text-3xl">0 days ago</div>
+                <div className="font-semibold text-3xl">{lastGeneratedLabel}</div>
               </div>
               <div className="icon">
                 <span className="material-symbols-outlined text-gray-500">
@@ -85,7 +144,7 @@ const Profile = () => {
           </div>
         </section>
         <section>
-          <ProfileChart />
+          <ProfileChart data={activity} loading={activityLoading} error={activityError} />
         </section>
       </div>
     </div>
